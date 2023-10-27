@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrap">
+        <div class="gameField" id="gameField">
+        </div>
+        <div class="action">
+            <span class="button" id="prev" >☚</span>
+            <span class="button" id="next">☛</span>
+        </div>
+        <div class="actionAlg">
+            <div>
+                <input type="radio" id="bfsRadio" name="alg" value="bfs" checked><label for="bfsRadio" class="text" id="bfs">bfs</label>
+            </div>
+            <div>
+                <input type="radio" id="dfsRadio" name="alg" value="dfs"><label for="dfsRadio" class="text" id="dfs">dfs</label>
+            </div>
+        </div>
+        <input type="button" id="buttonStart" value="Начать" style="width: 64px; height: 64px">
+    </div>
+    <div class="statusWindow" id="statusWindow">
+        <div class="status" id="status"></div>
+        <div class="statusText" id="statusText"></div>
+    </div>
+    <script type="module" src="game.js"></script>
+    <script type="module" src="state.js"></script>
+    <script type="module" src="dfs.js"></script>
+    <script type="module" src="bfs.js"></script>
+</body>
+</html>
