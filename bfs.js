@@ -40,7 +40,14 @@ function init(){
 }
 export function bfs(){
     init()
+    let abc = new State();
+    let cba = new State();
+    cba.grade = 0.003
+    abc.grade = -0.001
+    arrayO.push(cba);
     arrayO.push(startState);
+    arrayO.push(abc);
+    arrayO = [...arrayO].sort((a, b) => a.grade - b.grade);
     while(arrayO.length != 0){
         let x = arrayO[0];
         if(checkState(x, endState)){
@@ -49,7 +56,7 @@ export function bfs(){
             break;
         }
         arrayC[getKey(x.gameField)] = x;
-        countIter ++;
+        countIter++;
         countIterArrayCMax++;
         arrayO.shift();
         countIterArrayOCur--;

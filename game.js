@@ -1,6 +1,7 @@
 import {State, countBlock, ways} from "./state.js"
 import { dfs, getInfoDfs } from "./dfs.js"
 import {bfs, getInfoBfs} from "./bfs.js"
+import {A} from "./A.js"
 
 var startState = new State();
 var endState = new State();
@@ -29,9 +30,12 @@ function createGameField(){
     }
     shuffle(tempArray)
     //tempArray = [ 8,4,5,1,3,0,7,6,2 ] //bfs (8;1084) dfp (10;471000)
-    tempArray = [ 5,7,2,3,4,8,1,0,6 ] //bfs (7;516) dfp (13;1055020)
-    //tempArray = [ 4,1,0,3,9,5,2,7,8,6,14,11,12,10,13,15 ];
+    //tempArray = [ 5,7,2,3,4,8,1,0,6 ] //bfs (7;516) dfp (13;1055020)
+    //tempArray = [ 3,4,1,6,8,0,5,2,7 ]
+    tempArray = [ 4,1,0,3,9,5,2,7,8,6,14,11,12,10,13,15 ];
     //tempArray = [ 0,1,2,3,4,5,6,7,8,9,15,14,12,13,11,10 ];
+    //tempArray = [5,4,0,3,1,7,8,6,2]
+    //tempArray = [3,4,5,6,2,1,0,7,8]
     for(let i = 0; i < countBlock; i++){
         for(let j = 0; j < countBlock; j++){
             startState.gameField[i][j] = tempArray[i * countBlock + j];
@@ -48,15 +52,9 @@ function changeStatus(status, statusText){
     setTimeout(() => statusWindowEl.classList.remove("show"), 20000)
 }
 function start(){
-    let r1 = document.getElementById('bfsRadio')
-    let r2 = document.getElementById('dfsRadio')
+    let r1 = document.getElementById('ARadio')
     if(r1.checked){
-        bfs();
-        changeStatus('OK', getInfoBfs())
-    }
-    if(r2.checked){
-        dfs();
-        changeStatus('OK', getInfoDfs())
+        A();
     }
 }
 function next(){

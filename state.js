@@ -1,4 +1,4 @@
-var countBlock = 3;
+var countBlock = 4;
 export var ways = [];
 export function resetWays(){
     ways = [];
@@ -6,9 +6,8 @@ export function resetWays(){
 export class State{
     gameField = new Array(countBlock);
     parentState = null;
-    indexI = 0;
-    indexJ = 0;
-    dir = '';
+    iter = 0;
+    grade = 0;
     constructor() {
         for (let i = 0; i < countBlock; i++){
             this.gameField[i] = new Array(countBlock);
@@ -35,9 +34,7 @@ export function turnClockwise(state, i, j){
     newState.gameField[i + 1][j] = newState.gameField[i + 1][j + 1];
     newState.gameField[i + 1][j + 1] = newState.gameField[i][j + 1];
     newState.gameField[i][j + 1] = temp;
-    newState.indexI = i;
-    newState.indexJ = j;
-    newState.dir = 'r'
+    newState.iter = state.iter + 1;
     return newState;
 }
 export function turnCounterclockwise(state, i, j){
@@ -49,9 +46,7 @@ export function turnCounterclockwise(state, i, j){
     newState.gameField[i][j + 1] = newState.gameField[i + 1][j + 1];
     newState.gameField[i + 1][j + 1] = newState.gameField[i + 1][j];
     newState.gameField[i + 1][j] = temp;
-    newState.indexI = i;
-    newState.indexJ = j;
-    newState.dir = 'l'
+    newState.iter = state.iter + 1;
     return newState;
 }
 export function getKey(state){
