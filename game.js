@@ -1,8 +1,8 @@
 import {State, countBlock, ways} from "./state.js"
-import { dfs, getInfoDfs } from "./dfs.js"
 import {bfs, getInfoBfs} from "./bfs.js"
-import {A} from "./A.js"
-
+import {A, getInfoA} from "./A.js"
+import {dbfs, getInfoDbfs} from "./dbfs.js";
+//tempArray = [0,1,7,8,2,3,6,5,4]
 var startState = new State();
 var endState = new State();
 var sizeField = 600;
@@ -29,13 +29,14 @@ function createGameField(){
         tempArray.push(i);
     }
     shuffle(tempArray)
-    //tempArray = [ 8,4,5,1,3,0,7,6,2 ] //bfs (8;1084) dfp (10;471000)
-    //tempArray = [ 5,7,2,3,4,8,1,0,6 ] //bfs (7;516) dfp (13;1055020)
-    //tempArray = [ 3,4,1,6,8,0,5,2,7 ]
-    tempArray = [ 4,1,0,3,9,5,2,7,8,6,14,11,12,10,13,15 ];
-    //tempArray = [ 0,1,2,3,4,5,6,7,8,9,15,14,12,13,11,10 ];
-    //tempArray = [5,4,0,3,1,7,8,6,2]
-    //tempArray = [3,4,5,6,2,1,0,7,8]
+    //tempArray = [ 3,4,1,6,8,0,5,2,7 ] //5
+    //tempArray = [ 1,3,2,7,4,6,5,0,8 ] //6
+    //tempArray = [ 5,7,2,3,4,8,1,0,6 ] //7
+    //tempArray = [ 2,1,8,4,7,5,6,3,0 ] //8
+    //tempArray = [ 0,6,8,7,5,3,2,1,4 ] //9
+
+    //tempArray = [ 0,1,2,3,4,5,6,7,8,9,15,14,12,13,11,10 ]; //2
+    //tempArray = [ 4,1,0,3,9,5,2,7,8,6,14,11,12,10,13,15 ]; //4
     for(let i = 0; i < countBlock; i++){
         for(let j = 0; j < countBlock; j++){
             startState.gameField[i][j] = tempArray[i * countBlock + j];
@@ -45,25 +46,39 @@ function createGameField(){
     }
 }
 function changeStatus(status, statusText){
-    let statusWindowEl = document.getElementById("statusWindow");
-    statusWindowEl.classList.add("show")
-    document.getElementById("status").innerHTML = `${status}`;
-    document.getElementById("statusText").innerHTML = `Количество итераций: ${statusText.countIter}\nКоличество максимального размера О: ${statusText.countIterArrayOMax}\nКоличество текущего размера О: ${statusText.countIterArrayOCur}\nМаксимальное количество узлов: ${statusText.countIterArrayOMax+statusText.countIterArrayCMax}\n`;
-    setTimeout(() => statusWindowEl.classList.remove("show"), 20000)
+    console.log(`${status}\n Длина пути: ${statusText.lengthWay}\n Количество итераций: ${statusText.countIter}\n Количество максимального размера О: ${statusText.countIterArrayOMax}\n Количество текущего размера О: ${statusText.countIterArrayOCur}\n Максимальное количество узлов: ${statusText.countIterArrayOMax+statusText.countIterArrayCMax}\n`);
 }
 function start(){
-    let r1 = document.getElementById('ARadio')
+    let r1 = document.getElementById('bfsRadio')
+    let r2 = document.getElementById('dbfsRadio')
+    let r3 = document.getElementById('A1Radio')
+    let r4 = document.getElementById('A2Radio')
+    let r5 = document.getElementById('A3Radio')
     if(r1.checked){
-        A();
+        bfs();
+        changeStatus('bfs: ', getInfoBfs());
+    }
+    if(r2.checked){
+        dbfs();
+        changeStatus('dbfs: ', getInfoDbfs());
+    }
+    if(r3.checked){
+        A(1);
+        changeStatus('Манхэттенское расстояние: ', getInfoA());
+    }
+    if(r4.checked){
+        A(2);
+        changeStatus('Евклидово расстояние: ', getInfoA());
+    }
+    if(r5.checked){
+        A(3);
+        changeStatus('Количество элементов стоящик не на своих позициях: ', getInfoA());
     }
 }
 function next(){
     if(ways.length != 0){
         if(indexWay < ways.length - 1){
             indexWay++;
-            //console.log(indexWay)
-            console.log(ways)
-            //console.log(ways[indexWay])
             startState.gameField = ways[indexWay]
             drawGameField(startState)
         }
@@ -73,9 +88,6 @@ function prev(){
     if(ways.length != 0){
         if(indexWay > 0){
             indexWay--;
-            //console.log(indexWay)
-            console.log(ways)
-            //console.log(ways[indexWay])
             startState.gameField = ways[indexWay]
             drawGameField(startState)
         }

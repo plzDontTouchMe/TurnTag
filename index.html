@@ -14,8 +14,20 @@
             <span class="button" id="next">☛</span>
         </div>
         <div class="actionAlg">
-            <div>
-                <input type="radio" id="ARadio" name="alg" value="A" checked><label for="ARadio" class="text" id="A">A*</label>
+            <div style="text-align: center;">
+                <input type="radio" id="bfsRadio" name="alg" value="bfs" checked><label for="bfsRadio" class="text" id="bfs">bfs</label>
+            </div>
+            <div style="text-align: center;">
+                <input type="radio" id="dbfsRadio" name="alg" value="dbfs"><label for="dbfsRadio" class="text" id="dbfs">dbfs</label>
+            </div>
+            <div style="text-align: center;">
+                <input type="radio" id="A1Radio" name="alg" value="A"><label for="A1Radio" class="text" id="A1">A* - манхэттенское расстояние</label>
+            </div>
+            <div style="text-align: center;">
+                <input type="radio" id="A2Radio" name="alg" value="A"><label for="A2Radio" class="text" id="A2">A* - евклидово расстояние</label>
+            </div>
+            <div style="text-align: center;">
+                <input type="radio" id="A3Radio" name="alg" value="A"><label for="A3Radio" class="text" id="A3">A* - количество элементов стоящик не на своих позициях</label>
             </div>
         </div>
         <input type="button" id="buttonStart" value="Начать" style="width: 64px; height: 64px">
@@ -26,6 +38,8 @@
     </div>
     <script type="module" src="game.js"></script>
     <script type="module" src="state.js"></script>
+    <script type="module" src="bfs.js"></script>
+    <script type="module" src="dbfs.js"></script>
     <script type="module" src="A.js"></script>
 </body>
 </html>

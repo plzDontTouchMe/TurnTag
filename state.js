@@ -1,4 +1,4 @@
-var countBlock = 4;
+var countBlock = 3;
 export var ways = [];
 export function resetWays(){
     ways = [];
@@ -62,12 +62,24 @@ export function getWay(x){
     let counter = 0;
     while(true){
         ways.unshift(x.gameField);
-        //ways.push([x.indexI, x.indexJ,x.dir])
-        if(x.parentState == null) break;
+        if(x.parentState == null) return counter;
         x = x.parentState;
         counter++;
     }
-    console.log("ITER LAST - " + counter);
-    console.log(ways)
+}
+export function getWayVersion2(s1, s2){
+    let counter = 0;
+    while(true){
+        ways.unshift(s1.gameField);
+        if(s1.parentState == null) break;
+        s1 = s1.parentState;
+        counter++;
+    }
+    while(true){
+        if(s2.parentState == null) return counter;
+        s2 = s2.parentState;
+        ways.push(s2.gameField);
+        counter++;
+    }
 }
 export { countBlock };
