@@ -18,6 +18,7 @@ var countIter = 0;
 var countIterArrayOCur = 0;
 var countIterArrayOMax = 0;
 var countIterArrayCMax = 0;
+var maxState = 0;
 
 export function getInfoA(){
     return {
@@ -25,7 +26,8 @@ export function getInfoA(){
         countIter: countIter,
         countIterArrayOMax: countIterArrayOMax,
         countIterArrayCMax: countIterArrayCMax,
-        countIterArrayOCur: countIterArrayOCur
+        countIterArrayOCur: countIterArrayOCur,
+        maxState: maxState
     }
 }
 
@@ -37,6 +39,7 @@ function init(){
     countIterArrayOCur = 0;
     countIterArrayOMax = 0;
     countIterArrayCMax = 0;
+    maxState = new State();
     resetWays();
 }
 
@@ -96,10 +99,10 @@ function countWrongPosition(state){
     let tempCost = 0;
     for(let i = 0; i < countBlock; i++){
         for(let j = 0; j < countBlock; j++){
-            tempCost += Math.ceil(getCountPos(state.gameField[i][j], i, j) / 4);
+            tempCost += getCountPos(state.gameField[i][j], i, j);
         }
     }
-    return tempCost;
+    return Math.ceil(tempCost / 4);
 }
 
 function g3(state){
@@ -119,38 +122,50 @@ function f3(state){
 //-----------------------------------------f2-------------------------------------------
 
 function checkSq(i,j){
-    if ((i==-1) || (j==-1)) return false;
-    return !((i+1==countBlock) || (j+1==countBlock))
+    if ((i<=-1) || (j<=-1)) return false;
+    return !((i===countBlock) || (j===countBlock))
 }
 
 var dict = {};
 
+function createPointOfSq(array, i, j, offsetI, offsetJ){
+    if (checkSq(i+offsetI,j+offsetJ)){
+        array.push({
+            x: i+offsetI,
+            y :j+offsetJ
+        });
+    }
+}
+
+function createSq(i,j){
+    let array = [];
+    createPointOfSq(array, i, j, 0, 0);
+    createPointOfSq(array, i, j, 1, 0);
+    createPointOfSq(array, i, j, 0, 1);
+    createPointOfSq(array, i, j, 1, 1);
+    return array;
+}
+
+function createDict(){
+    for (let i=0;i<countBlock;i++) {
+        for (let j = 0; j < countBlock; j++) {
+            dict[i * countBlock + j] = getArray(i, j)
+        }
+    }
+}
+    
+createDict();
+
 function getArray(i,j){
-    let array = []
-    if (checkSq(i,j)){
-        array.push({
-            x: i,
-            y :j
-        });
-    }
-    if (checkSq(i-1,j-1)){
-        array.push({
-            x: i-1,
-            y :j-1
-        });
-    }
-    if (checkSq(i-1,j)){
-        array.push({
-            x: i-1,
-            y :j
-        });
-    }
-    if (checkSq(i,j-1)){
-        array.push({
-            x: i,
-            y :j-1
-        });
-    }
+    let array = [];
+    let tempArray = createSq(i - 1, j - 1);
+    if(tempArray.length === 4)  array.push(tempArray);
+    tempArray = createSq(i - 1, j);
+    if(tempArray.length === 4)  array.push(tempArray);
+    tempArray = createSq(i, j - 1);
+    if(tempArray.length === 4)  array.push(tempArray);
+    tempArray = createSq(i, j);
+    if(tempArray.length === 4)  array.push(tempArray);
     return array;
 }
 
@@ -165,23 +180,38 @@ function getDictNumberIndexSq() {
 
 function getCountSq(el, i, j){
     let arrayEl = getArray(i,j);
-    let indexI = parseInt(el / countBlock);
-    let indexJ = el % countBlock;
-    for(let tempI = 0; tempI < arrayEl.length; tempI++){
-        if(indexI === arrayEl[tempI].x && indexJ === arrayEl[tempI].y) {
-            return 0;
+    let count = 0;
+    let isEqual = true;
+    for(let tempI = 0;tempI < arrayEl.length; tempI++){
+        for(let tempJ = 0; tempJ < dict[el].length; tempJ++){
+            for(let tempK = 0; tempK < arrayEl[tempI].length; tempK++){
+                if(arrayEl[tempI][tempK].x !== dict[el][tempJ][tempK].x || arrayEl[tempI][tempK].y !== dict[el][tempJ][tempK].y) isEqual = false;
+            }
+            if(isEqual) count++;
+            isEqual = true;
         }
     }
-    return 1;
+    let result = dict[el].length - count;
+    if(dict[el].length === countBlock + 1){
+        if(el !== endState.gameField[i][j]){
+            result--;
+        }
+    }
+    if(result === 0){
+        if(el !== endState.gameField[i][j]){
+            result++;
+        }
+    }
+    return result;
 }
 function countWrongSq(state){
     let tempCost = 0;
     for(let i = 0; i < countBlock; i++){
         for(let j = 0; j < countBlock; j++){
-            tempCost += Math.ceil(getCountSq(state.gameField[i][j], i, j) / 4);
+            tempCost += getCountSq(state.gameField[i][j], i, j);
         }
     }
-    return tempCost;
+    return Math.ceil(tempCost / 4);
 }
 function g2(state){
     return state.iter;
@@ -199,16 +229,16 @@ function f2(state){
 
 //-----------------------------------------f1-------------------------------------------
 function getCostManhattanDistance(el, i, j){
-    return Math.abs(Math.ceil(parseInt(el / countBlock) - i) + Math.abs(el % countBlock - j) / 4);
+    return Math.abs(parseInt(el / countBlock) - i) + Math.abs(el % countBlock - j);
 }
 function manhattanDistance(state){
     let tempCost = 0;
     for(let i = 0; i < countBlock; i++){
         for(let j = 0; j < countBlock; j++){
-            tempCost += Math.ceil(getCostManhattanDistance(state.gameField[i][j], i, j));
+            tempCost += getCostManhattanDistance(state.gameField[i][j], i, j);
         }
     }
-    return tempCost;
+    return Math.ceil(tempCost / 4);
 }
 function g1(state){
     return state.iter;
@@ -223,6 +253,13 @@ function f1(state){
 }
 //-------------------------------------------------------------------------------------
 
+
+function checkMaxState(state){
+    if (state.grade - state.iter > maxState.grade - maxState.iter) {
+        maxState = new State();
+        maxState = JSON.parse(JSON.stringify(state));
+    }
+}
 
 export function A(number) {
     init();
@@ -240,11 +277,13 @@ export function A(number) {
             break;
         }
     }
+    maxState = JSON.parse(JSON.stringify(startState));
     arrayO.push(startState);
     countIterArrayOCur++;
     countIterArrayOMax++;
     while(arrayO.length !== 0) {
         let x = arrayO[0];
+        checkMaxState(x);
         countIter++;
         if(checkState(x, endState)){
             lengthWay = getWay(x);

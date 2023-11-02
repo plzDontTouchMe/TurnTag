@@ -29,12 +29,16 @@ function createGameField(){
         tempArray.push(i);
     }
     shuffle(tempArray)
-    tempArray = [ 3,4,1,6,8,0,5,2,7 ] //5
+    //tempArray = [ 0,1,2,3,5,8,6,4,7 ] //1
+    //tempArray = [ 0,1,2,3,8,7,6,5,4 ] //2
+    //tempArray = [ 3,4,1,6,8,0,5,2,7 ] //5
     //tempArray = [ 1,3,2,7,4,6,5,0,8 ] //6
     //tempArray = [ 5,7,2,3,4,8,1,0,6 ] //7
-    //tempArray = [ 2,1,8,4,7,5,6,3,0 ] //8
+    //tempArray = [ 2,1,8,4,7,5,6,3,0 ] //8 dead
+    //tempArray = [ 8,3,4,5,6,7,2,1,0 ] //8
     //tempArray = [ 0,6,8,7,5,3,2,1,4 ] //9
-
+    //tempArray = [ 8,7,6,5,4,3,2,1,0 ] //10
+    
     //tempArray = [ 0,1,2,3,4,5,6,7,8,9,15,14,12,13,11,10 ]; //2
     //tempArray = [ 4,1,0,3,9,5,2,7,8,6,14,11,12,10,13,15 ]; //4
     for(let i = 0; i < countBlock; i++){
@@ -46,7 +50,30 @@ function createGameField(){
     }
 }
 function changeStatus(status, statusText){
-    console.log(`${status}\n Длина пути: ${statusText.lengthWay}\n Количество итераций: ${statusText.countIter}\n Количество максимального размера О: ${statusText.countIterArrayOMax}\n Количество текущего размера О: ${statusText.countIterArrayOCur}\n Максимальное количество узлов: ${statusText.countIterArrayOMax+statusText.countIterArrayCMax}\n`);
+    let text = (
+        `${status}
+        Количество итераций: ${statusText.countIter}
+        Количество максимального размера О: ${statusText.countIterArrayOMax}
+        Количество текущего размера О: ${statusText.countIterArrayOCur}
+        Максимальное количество узлов: ${statusText.countIterArrayOMax+statusText.countIterArrayCMax}
+        Длина пути: ${statusText.lengthWay}`);
+    if(statusText.maxState !== undefined){
+        let array = "";
+        for(let i = 0; i < countBlock; i++){
+            for(let j = 0; j < countBlock; j++){
+                array += statusText.maxState.gameField[i][j] + ' ';
+            }
+            if(i == countBlock - 1) break;
+            array += '\n\t\t';
+        }
+        text += (`
+        ${statusText.maxState.grade - statusText.maxState.iter}
+        ${array}`);
+    }
+    else{
+        
+    }
+    console.log(text)
 }
 function start(){
     let r1 = document.getElementById('bfsRadio')
@@ -68,7 +95,7 @@ function start(){
     }
     if(r4.checked){
         A(2);
-        changeStatus('Евклидово расстояние: ', getInfoA());
+        changeStatus('Мощность квадратиков: ', getInfoA());
     }
     if(r5.checked){
         A(3);
