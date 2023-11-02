@@ -88,7 +88,7 @@ function deleteInO(state){
 
 
 //-----------------------------------------f3-------------------------------------------
-function getCount(el, i, j){
+function getCountPos(el, i, j){
     if(el !== endState.gameField[i][j]) return 1;
     return 0;
 }
@@ -96,14 +96,14 @@ function countWrongPosition(state){
     let tempCost = 0;
     for(let i = 0; i < countBlock; i++){
         for(let j = 0; j < countBlock; j++){
-            tempCost += getCount(state.gameField[i][j], i, j);
+            tempCost += Math.ceil(getCountPos(state.gameField[i][j], i, j) / 4);
         }
     }
     return tempCost;
 }
 
 function g3(state){
-    return state.iter * 0.9;
+    return state.iter;
 }
 
 function h3(state){
@@ -117,24 +117,78 @@ function f3(state){
 
 
 //-----------------------------------------f2-------------------------------------------
-function getCostEuclideanDistance(el, i, j){
-    return Math.sqrt(Math.pow(parseInt(el / countBlock) - i, 2) + Math.pow(el % countBlock - j,2));
+
+function checkSq(i,j){
+    if ((i==-1) || (j==-1)) return false;
+    return !((i+1==countBlock) || (j+1==countBlock))
 }
-function euclideanDistance(state){
+
+var dict = {};
+
+function getArray(i,j){
+    let array = []
+    if (checkSq(i,j)){
+        array.push({
+            x: i,
+            y :j
+        });
+    }
+    if (checkSq(i-1,j-1)){
+        array.push({
+            x: i-1,
+            y :j-1
+        });
+    }
+    if (checkSq(i-1,j)){
+        array.push({
+            x: i-1,
+            y :j
+        });
+    }
+    if (checkSq(i,j-1)){
+        array.push({
+            x: i,
+            y :j-1
+        });
+    }
+    return array;
+}
+
+function getDictNumberIndexSq() {
+    for (let i=0;i<countBlock;i++){
+        for (let j=0;j<countBlock;j++){
+            let el = i*countBlock+j;
+            dict[el]=getArray(i,j);
+        }
+    }
+}
+
+function getCountSq(el, i, j){
+    let arrayEl = getArray(i,j);
+    let indexI = parseInt(el / countBlock);
+    let indexJ = el % countBlock;
+    for(let tempI = 0; tempI < arrayEl.length; tempI++){
+        if(indexI === arrayEl[tempI].x && indexJ === arrayEl[tempI].y) {
+            return 0;
+        }
+    }
+    return 1;
+}
+function countWrongSq(state){
     let tempCost = 0;
     for(let i = 0; i < countBlock; i++){
         for(let j = 0; j < countBlock; j++){
-            tempCost += getCostEuclideanDistance(state.gameField[i][j], i, j);
+            tempCost += Math.ceil(getCountSq(state.gameField[i][j], i, j) / 4);
         }
     }
     return tempCost;
 }
 function g2(state){
-    return state.iter * 2;
+    return state.iter;
 }
 
 function h2(state){
-    return euclideanDistance(state);
+    return countWrongSq(state);
 }
 
 function f2(state){
@@ -145,19 +199,19 @@ function f2(state){
 
 //-----------------------------------------f1-------------------------------------------
 function getCostManhattanDistance(el, i, j){
-    return Math.abs(parseInt(el / countBlock) - i) + Math.abs(el % countBlock - j)
+    return Math.abs(Math.ceil(parseInt(el / countBlock) - i) + Math.abs(el % countBlock - j) / 4);
 }
 function manhattanDistance(state){
     let tempCost = 0;
     for(let i = 0; i < countBlock; i++){
         for(let j = 0; j < countBlock; j++){
-            tempCost += getCostManhattanDistance(state.gameField[i][j], i, j);
+            tempCost += Math.ceil(getCostManhattanDistance(state.gameField[i][j], i, j));
         }
     }
     return tempCost;
 }
 function g1(state){
-    return state.iter * 2;
+    return state.iter;
 }
 
 function h1(state){
