@@ -15,18 +15,14 @@ var arrayO = []; //очередь
 var arrayC = {};
 var lengthWay = 0;
 var countIter = 0;
-var countIterArrayOCur = 0;
-var countIterArrayOMax = 0;
-var countIterArrayCMax = 0;
+var N = 0;
 var maxState = 0;
 
 export function getInfoA(){
     return {
         lengthWay: lengthWay,
         countIter: countIter,
-        countIterArrayOMax: countIterArrayOMax,
-        countIterArrayCMax: countIterArrayCMax,
-        countIterArrayOCur: countIterArrayOCur,
+        N: N,
         maxState: maxState
     }
 }
@@ -36,9 +32,7 @@ function init(){
     arrayC = {};
     lengthWay = 0;
     countIter = 0;
-    countIterArrayOCur = 0;
-    countIterArrayOMax = 0;
-    countIterArrayCMax = 0;
+    N = 0;
     maxState = new State();
     resetWays();
 }
@@ -47,25 +41,22 @@ function insertInO(el){
     for(let i = 0; i < arrayO.length; i++){
         if(el.grade < arrayO[i].grade) {
             arrayO.splice(i, 0, el);
-            countIterArrayOCur++;
-            countIterArrayOMax++;
             return;
         }
     }
     arrayO.splice(arrayO.length, 0, el);
-    countIterArrayOCur++;
-    countIterArrayOMax++;
 }
 
 function check(state){
     let key = getKey(state.gameField);
     if(!arrayC.hasOwnProperty(key)){
-        deleteInO(state);
+        deleteInO(state)
         insertInO(state);
     }
     else{
         if(state.grade < arrayC[key].grade){
             delete arrayC[key];
+            N++;
             insertInO(state);
         }
     }
@@ -73,7 +64,7 @@ function check(state){
 
 function getIndexInO(state){
     for(let i = 0; i < arrayO.length; i++){
-        if (state.gameField === arrayO[i].gameField) {
+        if (getKey(state.gameField) === getKey(arrayO[i].gameField)) {
             if(state.grade < arrayO[i].grade) return i;
             return -1;
         }
@@ -85,7 +76,7 @@ function deleteInO(state){
     let index = getIndexInO(state)
     if(index !== -1){
         arrayO.splice(index, 1);
-        countIterArrayOCur--;
+        N++;
     }
 }
 
@@ -279,20 +270,17 @@ export function A(number) {
     }
     maxState = JSON.parse(JSON.stringify(startState));
     arrayO.push(startState);
-    countIterArrayOCur++;
-    countIterArrayOMax++;
     while(arrayO.length !== 0) {
         let x = arrayO[0];
         checkMaxState(x);
         countIter++;
         if(checkState(x, endState)){
             lengthWay = getWay(x);
+            N = Object.keys(arrayC).length + arrayO.length;
             break;
         }
         arrayC[getKey(x.gameField)] = x;
-        countIterArrayCMax++;
         arrayO.shift();
-        countIterArrayOCur--;
         for(let i = 0; i < countBlock - 1; i++){
             for(let j = 0; j < countBlock - 1; j++){
                 let x1 = turnClockwise(x, i, j);

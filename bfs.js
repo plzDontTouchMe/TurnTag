@@ -15,17 +15,13 @@ var arrayO = []; //очередь
 var arrayC = {};
 var lengthWay = 0;
 var countIter = 0;
-var countIterArrayOCur = 0;
-var countIterArrayOMax = 0;
-var countIterArrayCMax = 0;
+var N = 0;
 
 export function getInfoBfs(){
     return {
         lengthWay: lengthWay,
         countIter: countIter,
-        countIterArrayOMax: countIterArrayOMax,
-        countIterArrayCMax: countIterArrayCMax,
-        countIterArrayOCur: countIterArrayOCur
+        N: N
     }
 }
 function init(){
@@ -33,40 +29,44 @@ function init(){
     arrayC = {};
     lengthWay = 0;
     countIter = 0;
-    countIterArrayOCur = 0;
-    countIterArrayOMax = 0;
-    countIterArrayCMax = 0;
+    N = 0;
     resetWays();
 }
 function checkInC(state){
     let key = getKey(state.gameField);
-    if(!arrayC.hasOwnProperty(key)){
+    if(!arrayC.hasOwnProperty(key) && getIndexInO(state) === -1){
         arrayO.push(state)
-        countIterArrayOMax++;
-        countIterArrayOCur++;
     }
+}
+function getIndexInO(state){
+    for(let i = 0; i < arrayO.length; i++){
+        if (getKey(state.gameField) === getKey(arrayO[i].gameField)) {
+            return i;
+        }
+    }
+    return -1;
 }
 export function bfs(){
     init()
     arrayO.push(startState);
-    countIterArrayOCur++;
-    countIterArrayOMax++;
-    while(arrayO.length != 0){
+    while(arrayO.length !== 0){
         let x = arrayO[0];
         countIter++;
         if(checkState(x, endState)){
             lengthWay = getWay(x);
+            N = Object.keys(arrayC).length + arrayO.length;
             break;
         }
         arrayC[getKey(x.gameField)] = x;
-        countIterArrayCMax++;
         arrayO.shift();
-        countIterArrayOCur--;
         for(let i = 0; i < countBlock - 1; i++){
             for(let j = 0; j < countBlock - 1; j++){
                 let x1 = turnClockwise(x, i, j);
                 let x2 = turnCounterclockwise(x, i, j);
                 checkInC(x1);
+                x1 = turnClockwise(x1, i, j);
+                x1 = turnCounterclockwise(x1, i, j);
+                getIndexInO(x1);
                 checkInC(x2);
             }
         }

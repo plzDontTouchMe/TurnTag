@@ -1,7 +1,8 @@
-import {State, countBlock, ways} from "./state.js"
+import {State, countBlock, ways, turnClockwise, turnCounterclockwise} from "./state.js"
 import {bfs, getInfoBfs} from "./bfs.js"
 import {A, getInfoA} from "./A.js"
 import {dbfs, getInfoDbfs} from "./dbfs.js";
+import {iddfs, getInfoIddfs} from "./iddfs.js";
 //tempArray = [0,1,7,8,2,3,6,5,4]
 var startState = new State();
 var endState = new State();
@@ -21,6 +22,37 @@ function shuffle(array) {
 
     return array;
 }
+function generateStartState(n){
+    let tempEndState = new State();
+    for(let i = 0; i < countBlock; i++) {
+        for (let j = 0; j < countBlock; j++) {
+            tempEndState.gameField[i][j] = i * countBlock + j;
+        }
+    }
+    for(let i = 0, indexI = 0, indexJ = 0; i < n;){
+        let tempI = Math.floor(Math.random() * (countBlock - 1));
+        let tempJ = Math.floor(Math.random() * (countBlock - 1));
+        if(tempI !== indexI || tempJ !== indexJ){
+            indexI = tempI;
+            indexJ = tempJ;
+            let chance = Math.floor(Math.random() * 2);
+            if(chance === 0){
+                tempEndState = turnClockwise(tempEndState, indexI, indexJ);
+            }
+            else{
+                tempEndState = turnCounterclockwise(tempEndState, indexI, indexJ);
+            }
+            i++;
+        }
+    }
+    let tempArray = []
+    for(let i = 0; i < countBlock; i++){
+        for(let j = 0; j < countBlock; j++) {
+            tempArray.push(tempEndState.gameField[i][j])
+        }
+    }
+    return tempArray;
+}
 function createGameField(){
     var gf = document.getElementById("gameField");
     gf.style = `width: ${ sizeField }px; height: ${ sizeField }px;`;
@@ -29,16 +61,18 @@ function createGameField(){
         tempArray.push(i);
     }
     shuffle(tempArray)
-    //tempArray = [ 0,1,2,3,5,8,6,4,7 ] //1
+    tempArray = generateStartState(6);
+    //tempArray = [5,3,7,0,4,1,6,2,8]
+    //tempArray = [ 041375682 ] //1
     //tempArray = [ 0,1,2,3,8,7,6,5,4 ] //2
     //tempArray = [ 3,4,1,6,8,0,5,2,7 ] //5
     //tempArray = [ 1,3,2,7,4,6,5,0,8 ] //6
-    //tempArray = [ 5,7,2,3,4,8,1,0,6 ] //7
+    //tempArray = [ 5,7,2,3,4,8,1,0,6 ] //7 dead
     //tempArray = [ 2,1,8,4,7,5,6,3,0 ] //8 dead
     //tempArray = [ 8,3,4,5,6,7,2,1,0 ] //8
     //tempArray = [ 0,6,8,7,5,3,2,1,4 ] //9
     //tempArray = [ 8,7,6,5,4,3,2,1,0 ] //10
-    
+    //tempArray = [0,1,7,8,2,3,6,5,4]
     //tempArray = [ 0,1,2,3,4,5,6,7,8,9,15,14,12,13,11,10 ]; //2
     //tempArray = [ 4,1,0,3,9,5,2,7,8,6,14,11,12,10,13,15 ]; //4
     for(let i = 0; i < countBlock; i++){
@@ -53,9 +87,7 @@ function changeStatus(status, statusText){
     let text = (
         `${status}
         Количество итераций: ${statusText.countIter}
-        Количество максимального размера О: ${statusText.countIterArrayOMax}
-        Количество текущего размера О: ${statusText.countIterArrayOCur}
-        Максимальное количество узлов: ${statusText.countIterArrayOMax+statusText.countIterArrayCMax}
+        Максимальное количество узлов: ${statusText.N}
         Длина пути: ${statusText.lengthWay}`);
     if(statusText.maxState !== undefined){
         let array = "";
@@ -63,7 +95,7 @@ function changeStatus(status, statusText){
             for(let j = 0; j < countBlock; j++){
                 array += statusText.maxState.gameField[i][j] + ' ';
             }
-            if(i == countBlock - 1) break;
+            if(i === countBlock - 1) break;
             array += '\n\t\t';
         }
         text += (`
@@ -78,9 +110,10 @@ function changeStatus(status, statusText){
 function start(){
     let r1 = document.getElementById('bfsRadio')
     let r2 = document.getElementById('dbfsRadio')
-    let r3 = document.getElementById('A1Radio')
-    let r4 = document.getElementById('A2Radio')
-    let r5 = document.getElementById('A3Radio')
+    let r3 = document.getElementById('iddfsRadio')
+    let r4 = document.getElementById('A1Radio')
+    let r5 = document.getElementById('A2Radio')
+    let r6 = document.getElementById('A3Radio')
     if(r1.checked){
         bfs();
         changeStatus('bfs: ', getInfoBfs());
@@ -90,14 +123,18 @@ function start(){
         changeStatus('dbfs: ', getInfoDbfs());
     }
     if(r3.checked){
+        iddfs();
+        changeStatus('iddfs: ', getInfoIddfs());
+    }
+    if(r4.checked){
         A(1);
         changeStatus('Манхэттенское расстояние: ', getInfoA());
     }
-    if(r4.checked){
+    if(r5.checked){
         A(2);
         changeStatus('Мощность квадратиков: ', getInfoA());
     }
-    if(r5.checked){
+    if(r6.checked){
         A(3);
         changeStatus('Количество элементов стоящик не на своих позициях: ', getInfoA());
     }
