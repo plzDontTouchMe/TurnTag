@@ -1,4 +1,4 @@
-import {State, countBlock, ways, turnClockwise, turnCounterclockwise} from "./state.js"
+import {State, countBlock, ways, turnClockwise, turnCounterclockwise, getKey} from "./state.js"
 import {bfs, getInfoBfs} from "./bfs.js"
 import {A, getInfoA} from "./A.js"
 import {dbfs, getInfoDbfs} from "./dbfs.js";
@@ -61,8 +61,8 @@ function createGameField(){
         tempArray.push(i);
     }
     shuffle(tempArray)
-    tempArray = generateStartState(6);
-    //tempArray = [5,3,7,0,4,1,6,2,8]
+    //tempArray = generateStartState(6);
+    tempArray = [5,3,7,0,4,1,6,2,8]
     //tempArray = [ 041375682 ] //1
     //tempArray = [ 0,1,2,3,8,7,6,5,4 ] //2
     //tempArray = [ 3,4,1,6,8,0,5,2,7 ] //5
@@ -82,6 +82,8 @@ function createGameField(){
             gf.innerHTML += `<div class="item" style="width: ${width}px; height: ${height}px; left: ${0 + j * width + j * 20}px; top: ${0 + i * height + i * 20}px;">${startState.gameField[i][j]}</div>`
         }
     }
+    startState.stringField = getKey(startState.gameField);
+    endState.stringField = getKey(endState.gameField);
 }
 function changeStatus(status, statusText){
     let text = (

@@ -33,14 +33,13 @@ function init(){
     resetWays();
 }
 function checkInC(state){
-    let key = getKey(state.gameField);
-    if(!arrayC.hasOwnProperty(key) && getIndexInO(state) === -1){
+    if(!arrayC.hasOwnProperty(state.stringField) && getIndexInO(state) === -1){
         arrayO.push(state)
     }
 }
 function getIndexInO(state){
     for(let i = 0; i < arrayO.length; i++){
-        if (getKey(state.gameField) === getKey(arrayO[i].gameField)) {
+        if (state.stringField == arrayO[i].stringField) {
             return i;
         }
     }
@@ -57,16 +56,13 @@ export function bfs(){
             N = Object.keys(arrayC).length + arrayO.length;
             break;
         }
-        arrayC[getKey(x.gameField)] = x;
+        arrayC[x.stringField] = x;
         arrayO.shift();
         for(let i = 0; i < countBlock - 1; i++){
             for(let j = 0; j < countBlock - 1; j++){
                 let x1 = turnClockwise(x, i, j);
                 let x2 = turnCounterclockwise(x, i, j);
                 checkInC(x1);
-                x1 = turnClockwise(x1, i, j);
-                x1 = turnCounterclockwise(x1, i, j);
-                getIndexInO(x1);
                 checkInC(x2);
             }
         }

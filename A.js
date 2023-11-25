@@ -48,14 +48,13 @@ function insertInO(el){
 }
 
 function check(state){
-    let key = getKey(state.gameField);
-    if(!arrayC.hasOwnProperty(key)){
+    if(!arrayC.hasOwnProperty(state.stringField)){
         deleteInO(state)
         insertInO(state);
     }
     else{
-        if(state.grade < arrayC[key].grade){
-            delete arrayC[key];
+        if(state.grade < arrayC[state.stringField].grade){
+            delete arrayC[state.stringField];
             N++;
             insertInO(state);
         }
@@ -64,7 +63,7 @@ function check(state){
 
 function getIndexInO(state){
     for(let i = 0; i < arrayO.length; i++){
-        if (getKey(state.gameField) === getKey(arrayO[i].gameField)) {
+        if (state.stringField === arrayO[i].stringField) {
             if(state.grade < arrayO[i].grade) return i;
             return -1;
         }
@@ -279,7 +278,7 @@ export function A(number) {
             N = Object.keys(arrayC).length + arrayO.length;
             break;
         }
-        arrayC[getKey(x.gameField)] = x;
+        arrayC[x.stringField] = x;
         arrayO.shift();
         for(let i = 0; i < countBlock - 1; i++){
             for(let j = 0; j < countBlock - 1; j++){

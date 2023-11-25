@@ -6,6 +6,7 @@ export function resetWays(){
 export class State{
     gameField = new Array(countBlock);
     parentState = null;
+    stringField = '';
     iter = 0;
     grade = 0;
     constructor() {
@@ -18,12 +19,7 @@ export class State{
     }
 }
 export function checkState(s1, s2){
-    for (let i = 0; i < countBlock; i++){
-        for (let j = 0; j < countBlock; j++){
-            if(s1.gameField[i][j] != s2.gameField[i][j]) return false;
-        }
-    }
-    return true;
+    return s1.stringField == s2.stringField;
 }
 export function turnClockwise(state, i, j){
     let newState = new State();
@@ -35,6 +31,7 @@ export function turnClockwise(state, i, j){
     newState.gameField[i + 1][j + 1] = newState.gameField[i][j + 1];
     newState.gameField[i][j + 1] = temp;
     newState.iter = state.iter + 1;
+    newState.stringField = getKey(newState.gameField);
     return newState;
 }
 export function turnCounterclockwise(state, i, j){
@@ -47,6 +44,7 @@ export function turnCounterclockwise(state, i, j){
     newState.gameField[i + 1][j + 1] = newState.gameField[i + 1][j];
     newState.gameField[i + 1][j] = temp;
     newState.iter = state.iter + 1;
+    newState.stringField = getKey(newState.gameField);
     return newState;
 }
 export function getKey(state){

@@ -40,14 +40,13 @@ function init(){
     isOver = false;
 }
 function checkInC(state, arrayO, arrayC){
-    let key = getKey(state.gameField);
-    if(!arrayC.hasOwnProperty(key) && getIndexInO(state, arrayO === -1)){
+    if(!arrayC.hasOwnProperty(state.stringField) && getIndexInO(state, arrayO === -1)){
         arrayO.push(state)
     }
 }
 function getIndexInO(state, arrayO){
     for(let i = 0; i < arrayO.length; i++){
-        if (getKey(state.gameField) === getKey(arrayO[i].gameField)) {
+        if (state.stringField === arrayO[i].stringField) {
             return i;
         }
     }
@@ -63,15 +62,14 @@ function forwardDir(){
         isOver = true;
         return;
     }
-    let key = getKey(x.gameField);
-    index = arrayBackC.hasOwnProperty(key);
+    index = arrayBackC.hasOwnProperty(x.stringField);
     if(index !== false){
-        lengthWay = getWayVersion2(x, arrayBackC[key]);
+        lengthWay = getWayVersion2(x, arrayBackC[x.stringField]);
         N = Object.keys(arrayForwardC).length + Object.keys(arrayBackC).length + arrayForwardO.length + arrayBackO.length;
         isOver = true;
         return;
     }
-    arrayForwardC[getKey(x.gameField)] = x;
+    arrayForwardC[x.stringField] = x;
     arrayForwardO.shift();
     for(let i = 0; i < countBlock - 1; i++){
         for(let j = 0; j < countBlock - 1; j++){
@@ -85,7 +83,7 @@ function forwardDir(){
 function backDir(){
     let x = arrayBackO[0];
     countIter++;
-    arrayBackC[getKey(x.gameField)] = x;
+    arrayBackC[x.stringField] = x;
     arrayBackO.shift();
     for(let i = 0; i < countBlock - 1; i++){
         for(let j = 0; j < countBlock - 1; j++){

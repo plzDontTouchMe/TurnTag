@@ -37,11 +37,10 @@ function init(){
     isOver = false;
 }
 function checkInC(state){
-    let key = getKey(state.gameField);
-    if(arrayC.hasOwnProperty(key)){
-        let tempState = arrayC[key];
+    if(arrayC.hasOwnProperty(state.stringField)){
+        let tempState = arrayC[state.stringField];
         if (state.iter <= tempState.iter){
-            delete arrayC[key];
+            delete arrayC[state.stringField];
             N++;
             let index = getIndexInO(state);
             if(index === -1){
@@ -55,7 +54,7 @@ function checkInC(state){
             }
         }
     }
-    if(!arrayC.hasOwnProperty(key)){
+    if(!arrayC.hasOwnProperty(state.stringField)){
         let index = getIndexInO(state);
         if(index === -1){
             arrayO.push(state);
@@ -70,7 +69,7 @@ function checkInC(state){
 }
 function getIndexInO(state){
     for(let i = 0; i < arrayO.length; i++){
-        if (state.gameField === arrayO[i].gameField) {
+        if (state.stringField === arrayO[i].stringField) {
             return i;
         }
     }
@@ -95,7 +94,7 @@ export function iddfs(){
             N += Object.keys(arrayC).length + arrayO.length;
             isOver = true;
         }
-        arrayC[getKey(x.gameField)] = x;
+        arrayC[x.stringField] = x;
         arrayO.pop();
         if(x.iter < L){
             for(let i = 0; i < countBlock - 1; i++){
