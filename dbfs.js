@@ -55,6 +55,8 @@ function getIndexInO(state, arrayO){
 function forwardDir(){
     let x = arrayForwardO[0];
     countIter++;
+    arrayForwardC[x.stringField] = x;
+    arrayForwardO.shift();
     let index = getIndexBack0(x)
     if(index !== -1){
         lengthWay = getWayVersion2(x, arrayBackO[index]);
@@ -69,8 +71,6 @@ function forwardDir(){
         isOver = true;
         return;
     }
-    arrayForwardC[x.stringField] = x;
-    arrayForwardO.shift();
     for(let i = 0; i < countBlock - 1; i++){
         for(let j = 0; j < countBlock - 1; j++){
             let x1 = turnClockwise(x, i, j);
@@ -105,7 +105,9 @@ export function dbfs(){
     arrayForwardO.push(startState);
     arrayBackO.push(endState);
     while(!isOver){
+        if(arrayForwardO.length === 0) break;
         forwardDir();
         backDir();
     }
+    alert('Из данного начального состояния невозможно найти решение!');
 }

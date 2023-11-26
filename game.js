@@ -62,6 +62,7 @@ function createGameField(d){
     }
     shuffle(tempArray)
     tempArray = generateStartState(d);
+    //tempArray = [1,3,4,2]
     //tempArray = [5,3,7,0,4,1,6,2,8]
     //tempArray = [ 041375682 ] //1
     //tempArray = [ 0,1,2,3,8,7,6,5,4 ] //2
@@ -201,9 +202,9 @@ function getB(d,n){
     return b;
 }
 function Avg(){
-    let count = 5;
+    let count = 100;
     console.log('Начато')
-    for (let d = 6; d<=6;d++){
+    for (let d = 2; d<=6;d++){
         let avgBfs = 0, avgDbfs = 0, avgIddfs = 0, avgA1 = 0, avgA2 = 0, avgA3 = 0;
         let avgNBfs = 0, avgNDbfs = 0, avgNIddfs = 0, avgNA1 = 0, avgNA2 = 0, avgNA3 = 0;
         let avgBBfs = 0, avgBDbfs = 0, avgBIddfs = 0, avgBA1 = 0, avgBA2 = 0, avgBA3 = 0;

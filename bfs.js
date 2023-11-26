@@ -54,7 +54,7 @@ export function bfs(){
         if(checkState(x, endState)){
             lengthWay = getWay(x);
             N = Object.keys(arrayC).length + arrayO.length;
-            break;
+            return;
         }
         arrayC[x.stringField] = x;
         arrayO.shift();
@@ -67,4 +67,5 @@ export function bfs(){
             }
         }
     }
+    alert('Из данного начального состояния невозможно найти решение!')
 }

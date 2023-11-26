@@ -93,6 +93,7 @@ export function iddfs(){
             lengthWay = getWay(x);
             N += Object.keys(arrayC).length + arrayO.length;
             isOver = true;
+            return;
         }
         arrayC[x.stringField] = x;
         arrayO.pop();
@@ -107,5 +108,7 @@ export function iddfs(){
             }
         }
         if(arrayO.length === 0) newLength();
+        if(L >= 100) isOver = true;
     }
+    alert('Из данного начального состояния невозможно найти решение!')
 }

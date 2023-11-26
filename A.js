@@ -276,7 +276,7 @@ export function A(number) {
         if(checkState(x, endState)){
             lengthWay = getWay(x);
             N = Object.keys(arrayC).length + arrayO.length;
-            break;
+            return;
         }
         arrayC[x.stringField] = x;
         arrayO.shift();
@@ -306,4 +306,5 @@ export function A(number) {
             }
         }
     }
+    alert('Из данного начального состояния невозможно найти решение!')
 }
