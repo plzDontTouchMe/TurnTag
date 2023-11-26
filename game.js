@@ -53,7 +53,7 @@ function generateStartState(n){
     }
     return tempArray;
 }
-function createGameField(){
+function createGameField(d){
     var gf = document.getElementById("gameField");
     gf.style = `width: ${ sizeField }px; height: ${ sizeField }px;`;
     var tempArray = []
@@ -61,8 +61,8 @@ function createGameField(){
         tempArray.push(i);
     }
     shuffle(tempArray)
-    //tempArray = generateStartState(6);
-    tempArray = [5,3,7,0,4,1,6,2,8]
+    tempArray = generateStartState(d);
+    //tempArray = [5,3,7,0,4,1,6,2,8]
     //tempArray = [ 041375682 ] //1
     //tempArray = [ 0,1,2,3,8,7,6,5,4 ] //2
     //tempArray = [ 3,4,1,6,8,0,5,2,7 ] //5
@@ -168,10 +168,127 @@ export function drawGameField(state){
         }
     }
 }
+let minDiff = 1
+
+function calcNUseB(b,d){
+    let sum = 0;
+    for(let i=1;i<=d;i++){
+        sum += b ** i;
+    }
+    return sum;
+}
+
+function getB(d,n){
+    let b=1;
+    let move =1;
+    let nb = calcNUseB(b,d);
+    let isAgain = false;
+    while(Math.abs(n-nb) >= minDiff){
+        if (n>nb){
+            if (!isAgain){
+               b += move; 
+            } else{
+                move /= 2;
+                b += move;
+            }
+        } else {
+            move /= 2;
+            b -= move;
+            isAgain = true;
+        }
+        nb = calcNUseB(b,d);
+    }
+    return b;
+}
+function Avg(){
+    let count = 5;
+    console.log('Начато')
+    for (let d = 6; d<=6;d++){
+        let avgBfs = 0, avgDbfs = 0, avgIddfs = 0, avgA1 = 0, avgA2 = 0, avgA3 = 0;
+        let avgNBfs = 0, avgNDbfs = 0, avgNIddfs = 0, avgNA1 = 0, avgNA2 = 0, avgNA3 = 0;
+        let avgBBfs = 0, avgBDbfs = 0, avgBIddfs = 0, avgBA1 = 0, avgBA2 = 0, avgBA3 = 0;
+        for (let z = 0; z< count;z++){
+            createGameField(d)
+            A(1);
+            let x = getInfoA();
+            if (x.lengthWay != d){
+                z--;
+                continue;
+            }
+            avgA1 += x.countIter;
+            avgNA1 += x.N;
+            bfs();
+            x = getInfoBfs();
+            avgBfs += x.countIter;
+            avgNBfs += x.N;
+            dbfs();
+            x = getInfoDbfs();
+            avgDbfs += x.countIter;
+            avgNDbfs += x.N;
+            iddfs();
+            x = getInfoIddfs();
+            avgIddfs += x.countIter;
+            avgNIddfs += x.N;
+            A(2);
+            x = getInfoA();
+            avgA2 += x.countIter;
+            avgNA2 += x.N;
+            A(3);
+            x = getInfoA();
+            avgA3 += x.countIter;
+            avgNA3 += x.N;
+        }
+        avgA1 /= count;
+        avgBfs /= count;
+        avgDbfs /= count;
+        avgIddfs /= count;
+        avgA2 /= count;
+        avgA3 /= count;
+        avgNA1 /= count;
+        avgNBfs /= count;
+        avgNDbfs /= count;
+        avgNIddfs /= count;
+        avgNA2 /= count;
+        avgNA3 /= count;
+        avgBBfs = getB(d,avgNBfs);
+        avgBDbfs = getB(d,avgNDbfs);
+        avgBIddfs = getB(d,avgNIddfs);
+        avgBA1 = getB(d,avgNA1);
+        avgBA2 = getB(d,avgNA2);
+        avgBA3 = getB(d,avgNA3);
+        console.log('уровень '+d)
+        console.log('Bfs:')
+        console.log('Среднее кол-во итераций: '+avgBfs);
+        console.log('Среднее кол-во всех узлов: '+avgNBfs);
+        console.log('Коэффициент ветвления: '+avgBBfs);
+        console.log('Dbfs:')
+        console.log('Среднее кол-во итераций: '+avgDbfs);
+        console.log('Среднее кол-во всех узлов: '+avgNDbfs);
+        console.log('Коэффициент ветвления: '+avgBDbfs);
+        console.log('Iddfs:')
+        console.log('Среднее кол-во итераций: '+avgIddfs);
+        console.log('Среднее кол-во всех узлов: '+avgNIddfs);
+        console.log('Коэффициент ветвления: '+avgBIddfs);
+        console.log('A1:')
+        console.log('Среднее кол-во итераций: '+avgA1);
+        console.log('Среднее кол-во всех узлов: '+avgNA1);
+        console.log('Коэффициент ветвления: '+avgBA1);
+        console.log('A2:')
+        console.log('Среднее кол-во итераций: '+avgA2);
+        console.log('Среднее кол-во всех узлов: '+avgNA2);
+        console.log('Коэффициент ветвления: '+avgBA2);
+        console.log('A3:')
+        console.log('Среднее кол-во итераций: '+avgA3);
+        console.log('Среднее кол-во всех узлов: '+avgNA3);
+        console.log('Коэффициент ветвления: '+avgBA3);
+    }
+
+}
 
 createGameField()
 
 document.getElementById('buttonStart').onclick = start
+document.getElementById('buttonAvg').onclick = Avg
 document.getElementById('next').onclick = next
 document.getElementById('prev').onclick = prev
 
